@@ -1,7 +1,7 @@
 package Controller;
-import javax.swing.*;
-
 import View.GamePanel;
+
+import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -22,3 +22,5 @@ public class Main {
         gamepanel.startGameThread();
     }
 }
+
+// java -cp bin Controller.Main

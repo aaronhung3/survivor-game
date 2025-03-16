@@ -1,8 +1,8 @@
 package View;
-import javax.swing.*;
-
 import Model.Player;
+import Model.Enemy;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
@@ -18,11 +18,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     final int SCREEN_WIDTH = 20 * tileSize; // 960px
     final int SCREEN_HEIGHT = 20 * tileSize; // 720px
 
-    // Values of the hoop object
+    // Values of the player object
     final int playerScalar = 5;
-    final int xPos = SCREEN_WIDTH / 2;
-    final int yPos = SCREEN_HEIGHT / 2;
+    final int playerX = SCREEN_WIDTH / 2;
+    final int playerY = SCREEN_HEIGHT / 2;
     final int playerSize = 5 * playerScalar; // 5 x 5 size
+
+    // Values of the enemy object
+    final int enemyScalar = 3;
+    final int enemySize = 5 * enemyScalar;
 
     // Movement
     public boolean moveLeft;
@@ -34,8 +38,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     // ALlows the game to run in multiple threads
     Thread gameThread;
 
-    // Initiate an instance of the player object
-    Player player = new Player(xPos, yPos, playerSize);
+    // Initiate an instance of the player class
+    Player player = new Player(playerX, playerY, playerSize);
+
+    // Initiate an instance of the enemy class
+    Enemy enemy = new Enemy(SCREEN_WIDTH, SCREEN_HEIGHT, enemySize);
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -55,13 +62,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         // Trigger the repaint 
         while (gameThread != null) {
             if (moveLeft) {
-                player.xPos -= movementSpeed;
+                player.playerX -= movementSpeed;
             } else if (moveRight) {
-                player.xPos += movementSpeed;
+                player.playerX += movementSpeed;
             } else if (moveUp) {
-                player.yPos -= movementSpeed;
+                player.playerY -= movementSpeed;
             } else if (moveDown) {
-                player.yPos += movementSpeed;
+                player.playerY += movementSpeed;
             }
             repaint();
 
@@ -78,6 +85,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         player.draw(g);
+        enemy.draw(g);
     }
 
     // Movement for the player

@@ -1,20 +1,21 @@
 package Model;
+
 import java.awt.*;
 
 public class Player {
 
-    public int xPos;
-    public int yPos;
-    public int size;
+    public int playerX;
+    public int playerY;
+    public int playerSize;
 
-    public Player(int xPos, int yPos, int size) {
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.size = size;
+    public Player(int playerX, int playerY, int playerSize) {
+        this.playerX = playerX;
+        this.playerY = playerY;
+        this.playerSize = playerSize;
     }
 
     public void draw(Graphics g) {
         g.setColor(Color.GREEN);
-        g.fillRect(xPos, yPos, size, size);
+        g.fillRect(playerX, playerY, playerSize, playerSize);
     }
 }
