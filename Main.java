@@ -1,5 +1,7 @@
 import javax.swing.*;
 
+import ViewModel.GamePanel;
+
 public class Main {
     public static void main(String[] args) {
 

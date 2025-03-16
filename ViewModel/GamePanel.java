@@ -1,4 +1,8 @@
+package ViewModel;
 import javax.swing.*;
+
+import Model.Player;
+
 import java.awt.*;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
