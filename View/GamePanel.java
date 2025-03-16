@@ -1,4 +1,4 @@
-package ViewModel;
+package View;
 import javax.swing.*;
 
 import Model.Player;
