@@ -1,5 +1,6 @@
 package View;
 import Model.Player;
+import Model.CollisionHandler;
 import Model.Enemy;
 
 import javax.swing.*;
@@ -27,6 +28,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     final int playerX = SCREEN_WIDTH / 2;
     final int playerY = SCREEN_HEIGHT / 2;
     final int playerSize = 5 * playerScalar; // 5 x 5 size
+    public int playerLives = 5;
 
     // Values of the enemy object
     final int enemyScalar = 3;
@@ -54,7 +56,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private static final int SPAWN_INTERVAL = 2000;
 
     // Initiate an instance of the player class
-    Player player = new Player(playerX, playerY, playerSize);
+    Player player = new Player(playerX, playerY, playerSize, playerLives);
 
     // Initiate an instance of the enemy class
     Enemy enemy = new Enemy(SCREEN_WIDTH, SCREEN_HEIGHT, enemySize);
@@ -94,11 +96,23 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public void run() {
         // Trigger the repaint 
         while (gameThread != null) {
-            
             player.playerMove();
 
             for (Enemy enemy : enemies) {
                 enemy.attackPlayer(player, enemySpeed);
+                if (!player.isInvincible() && CollisionHandler.isColliding(player, enemy)) {
+                    player.loseLife();
+                    System.out.println("Player lost a life! " + player.getLives());
+                    player.triggerInvincible(3000);
+                    System.out.println("Player is Invincible!");
+                }
+            }
+
+            if (player.isInvincible() && System.currentTimeMillis() > player.invincibleTime) {
+                player.isInvincible = false;  // Reset invincibility after time is up
+            }
+            if (player.getLives() == 0) {
+                gameThread = null;
             }
 
             repaint();
@@ -115,7 +129,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        player.draw(g);
+        if (!player.isInvincible() || (System.currentTimeMillis() / 200) % 2 == 0) {
+            player.draw(g); // Only draw the player every alternate frame
+        }
+        
         for (Enemy enemy : enemies) {
             enemy.draw(g);
         }

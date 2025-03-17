@@ -15,10 +15,16 @@ public class Player {
     public boolean moveDown;
     final int movementSpeed = 10;
 
-    public Player(int playerX, int playerY, int playerSize) {
+    // Player stats
+    public int playerLives;
+    public boolean isInvincible = false;
+    public long invincibleTime;
+
+    public Player(int playerX, int playerY, int playerSize, int playerLives) {
         this.playerX = playerX;
         this.playerY = playerY;
         this.playerSize = playerSize;
+        this.playerLives = playerLives;
     }
 
     public void playerMove() {
@@ -54,6 +60,21 @@ public class Player {
         this.moveDown = down;
     }
 
+    public void loseLife() {
+        if (playerLives > 0) {
+            playerLives--;
+        }
+    }
+
+    public boolean isInvincible() {
+        return isInvincible;
+    }
+
+    public void triggerInvincible(int duration) {
+        isInvincible = true;
+        invincibleTime = System.currentTimeMillis() + duration;
+    }
+
     public void draw(Graphics g) {
         g.setColor(Color.GREEN);
         g.fillRect(playerX, playerY, playerSize, playerSize);
@@ -70,4 +91,9 @@ public class Player {
     public int getSize() {
         return playerSize;
     }
+
+    public int getLives() {
+        return playerLives;
+    }
+
 }
