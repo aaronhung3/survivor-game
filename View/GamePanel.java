@@ -6,6 +6,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener {
 
@@ -28,15 +32,27 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     final int enemyScalar = 3;
     final int enemySize = 5 * enemyScalar;
 
-    // Movement
+    // List of enemies
+    private final int MAX_ENEMIES = 10;
+    private ArrayList<Enemy> enemies = new ArrayList<>();
+
+    // Player Movement
     public boolean moveLeft;
     public boolean moveRight;
     public boolean moveUp;
     public boolean moveDown;
-    final int movementSpeed = 10;
+    public int movementSpeed = 10;
+
+    // Enemy Movement
+    public int enemySpeed = 5;
+
 
     // ALlows the game to run in multiple threads
     Thread gameThread;
+
+    // Timer for incremental enemy spawning
+    private ScheduledExecutorService spawnTimer; // Timer to help spawn enemies incrementally
+    private static final int SPAWN_INTERVAL = 2000;
 
     // Initiate an instance of the player class
     Player player = new Player(playerX, playerY, playerSize);
@@ -50,6 +66,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         this.setDoubleBuffered(true);
         this.setFocusable(true);
         this.addKeyListener(this);
+
+        startSpawningEnemies();
     }
 
     public void startGameThread() {
@@ -57,6 +75,22 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         gameThread.start();
     }
 
+    ///////////////////////Spawning the enemies incrementally/////////////////////////
+    
+    private void startSpawningEnemies() {
+        spawnTimer = Executors.newScheduledThreadPool(1);  // Single-threaded executor
+        spawnTimer.scheduleAtFixedRate(this::spawnEnemy, 0, SPAWN_INTERVAL, TimeUnit.MILLISECONDS);
+    }
+
+    private void spawnEnemy() {
+        if (enemies.size() < MAX_ENEMIES) {
+            enemies.add(new Enemy(SCREEN_WIDTH, SCREEN_HEIGHT, enemySize)); // Create new enemy
+        }
+    }
+     
+    //////////////////////////////////////////////////////////////////////////////////
+
+    // Handle all game logic
     @Override
     public void run() {
         // Trigger the repaint 
@@ -65,27 +99,34 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 player.playerX -= movementSpeed;
             } else if (moveRight) {
                 player.playerX += movementSpeed;
-            } else if (moveUp) {
+            }
+            if (moveUp) {
                 player.playerY -= movementSpeed;
             } else if (moveDown) {
                 player.playerY += movementSpeed;
             }
+
+            for (Enemy enemy : enemies) {
+                enemy.attackPlayer(player, enemySpeed);
+            }
             repaint();
 
-        try {
-            Thread.sleep(16); // Smooth movement (~60 FPS)
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-        
+            try {
+                Thread.sleep(16); // Smooth movement (~60 FPS)
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }   
     }
 
+    // Only used for painting
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         player.draw(g);
-        enemy.draw(g);
+        for (Enemy enemy : enemies) {
+            enemy.draw(g);
+        }
     }
 
     // Movement for the player

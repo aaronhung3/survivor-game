@@ -14,8 +14,36 @@ public class Player {
         this.playerSize = playerSize;
     }
 
+    public void moveLeft() {
+
+    }
+
+    public void moveRight() {
+
+    }
+
+    public void moveUp() {
+
+    }
+
+    public void moveDown() {
+
+    }
+
     public void draw(Graphics g) {
         g.setColor(Color.GREEN);
         g.fillRect(playerX, playerY, playerSize, playerSize);
+    }
+
+    public int getX() {
+        return playerX;
+    }
+
+    public int getY() {
+        return playerY;
+    }
+
+    public int getSize() {
+        return playerSize;
     }
 }

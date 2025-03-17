@@ -42,8 +42,34 @@ public class Enemy {
         }
     }
 
+    public void attackPlayer(Player player, int speed) {
+        int distanceX = player.getX() - this.enemyX;
+        int distanceY = player.getY() - this.enemyY;
+        double distance = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
+
+        if (distance > 0) {
+            int moveX = (int) (distanceX / distance * speed);
+            int moveY = (int) (distanceY / distance * speed);
+
+            this.enemyX += moveX;
+            this.enemyY += moveY;
+        }
+    }
+
     public void draw(Graphics g) {
         g.setColor(Color.RED);
         g.fillRect(enemyX, enemyY, enemySize, enemySize);
+    }
+
+    public int getX() {
+        return enemyX;
+    }
+
+    public int getY() {
+        return enemyY;
+    }
+
+    public int getSize() {
+        return enemySize;
     }
 }
