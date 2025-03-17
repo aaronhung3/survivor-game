@@ -41,7 +41,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public boolean moveRight;
     public boolean moveUp;
     public boolean moveDown;
-    public int movementSpeed = 10;
 
     // Enemy Movement
     public int enemySpeed = 5;
@@ -95,20 +94,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public void run() {
         // Trigger the repaint 
         while (gameThread != null) {
-            if (moveLeft) {
-                player.playerX -= movementSpeed;
-            } else if (moveRight) {
-                player.playerX += movementSpeed;
-            }
-            if (moveUp) {
-                player.playerY -= movementSpeed;
-            } else if (moveDown) {
-                player.playerY += movementSpeed;
-            }
+            
+            player.playerMove();
 
             for (Enemy enemy : enemies) {
                 enemy.attackPlayer(player, enemySpeed);
             }
+
             repaint();
 
             try {
@@ -132,6 +124,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     // Movement for the player
     @Override
     public void keyPressed(KeyEvent e) {
+
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             moveLeft = true;
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
@@ -141,10 +134,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             moveDown = true;
         }
+        player.setMovement(moveLeft, moveRight, moveUp, moveDown);
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+        
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             moveLeft = false;
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
@@ -154,6 +149,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             moveDown = false;
         }
+        player.setMovement(moveLeft, moveRight, moveUp, moveDown);
     }
 
     @Override
