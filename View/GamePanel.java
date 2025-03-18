@@ -20,8 +20,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     final int tileSize = originalTileSize * tileScalar; // Original size * scalar
 
     // Setup the screen width and screen height 
-    final int SCREEN_WIDTH = 20 * tileSize; // 960px
-    final int SCREEN_HEIGHT = 20 * tileSize; // 720px
+    public final int SCREEN_WIDTH = 20 * tileSize; // 960px
+    public final int SCREEN_HEIGHT = 20 * tileSize; // 720px
 
     // Values of the player object
     final int playerScalar = 5;
@@ -56,7 +56,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private static final int SPAWN_INTERVAL = 2000;
 
     // Initiate an instance of the player class
-    Player player = new Player(playerX, playerY, playerSize, playerLives);
+    Player player = new Player(playerX, playerY, playerSize, playerLives, this);
 
     // Initiate an instance of the enemy class
     Enemy enemy = new Enemy(SCREEN_WIDTH, SCREEN_HEIGHT, enemySize);
@@ -96,6 +96,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public void run() {
         // Trigger the repaint 
         while (gameThread != null) {
+
             player.playerMove();
 
             for (Enemy enemy : enemies) {

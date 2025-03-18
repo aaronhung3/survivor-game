@@ -2,7 +2,11 @@ package Model;
 
 import java.awt.*;
 
+import View.GamePanel;
+
 public class Player {
+
+    private GamePanel panel;
 
     public int playerX;
     public int playerY;
@@ -20,11 +24,12 @@ public class Player {
     public boolean isInvincible = false;
     public long invincibleTime;
 
-    public Player(int playerX, int playerY, int playerSize, int playerLives) {
+    public Player(int playerX, int playerY, int playerSize, int playerLives, GamePanel panel) {
         this.playerX = playerX;
         this.playerY = playerY;
         this.playerSize = playerSize;
         this.playerLives = playerLives;
+        this.panel = panel;
     }
 
     public void playerMove() {
@@ -48,7 +53,17 @@ public class Player {
             normalizeY = (int) (normalizeY / magnitude * movementSpeed);
         }
         
-        
+        if (playerX < 0) {
+            playerX = 0;
+        } else if (playerX + playerSize > panel.SCREEN_WIDTH) {
+            playerX = panel.SCREEN_WIDTH - playerSize;
+        }
+        if (playerY < 0) {
+            playerY = 0;
+        } else if (playerY + playerSize > panel.SCREEN_HEIGHT) {
+            playerY = panel.SCREEN_HEIGHT - playerSize;
+        }
+
         playerX += normalizeX;
         playerY += normalizeY;
     }
@@ -94,6 +109,14 @@ public class Player {
 
     public int getLives() {
         return playerLives;
+    }
+
+    public void setX(int x) {
+        this.playerX = x;
+    }
+
+    public void setY(int y) {
+        this.playerY = y;
     }
 
 }
