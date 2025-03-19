@@ -152,6 +152,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             moveDown = true;
         }
+
         player.setMovement(moveLeft, moveRight, moveUp, moveDown);
     }
 

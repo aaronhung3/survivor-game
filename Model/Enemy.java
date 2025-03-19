@@ -19,6 +19,7 @@ public class Enemy {
         Random random = new Random();
         int border = random.nextInt(4) + 1; // Randomly choose a number between 1 - 4
 
+        // Cases to make sure the enemies spawn at the border
         switch (border) {
             case 1:
                 this.enemyX = random.nextInt(screenWidth);
@@ -56,11 +57,6 @@ public class Enemy {
         }
     }
 
-    public void draw(Graphics g) {
-        g.setColor(Color.RED);
-        g.fillRect(enemyX, enemyY, enemySize, enemySize);
-    }
-
     public int getX() {
         return enemyX;
     }
@@ -71,5 +67,11 @@ public class Enemy {
 
     public int getSize() {
         return enemySize;
+    }
+
+    // Draw the enemy objects
+    public void draw(Graphics g) {
+        g.setColor(Color.RED);
+        g.fillRect(enemyX, enemyY, enemySize, enemySize);
     }
 }

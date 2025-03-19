@@ -17,7 +17,7 @@ public class Player {
     public boolean moveRight;
     public boolean moveUp;
     public boolean moveDown;
-    final int movementSpeed = 10;
+    private int movementSpeed = 10;
 
     // Player stats
     public int playerLives;
@@ -33,8 +33,8 @@ public class Player {
     }
 
     public void playerMove() {
-        int normalizeX = 0;
-        int normalizeY = 0;
+        double normalizeX = 0;
+        double normalizeY = 0;
 
         if (moveLeft) {
             normalizeX = -1;
@@ -52,20 +52,17 @@ public class Player {
             normalizeX = (int) (normalizeX / magnitude * movementSpeed);
             normalizeY = (int) (normalizeY / magnitude * movementSpeed);
         }
-        
-        if (playerX < 0) {
-            playerX = 0;
-        } else if (playerX + playerSize > panel.SCREEN_WIDTH) {
-            playerX = panel.SCREEN_WIDTH - playerSize;
-        }
-        if (playerY < 0) {
-            playerY = 0;
-        } else if (playerY + playerSize > panel.SCREEN_HEIGHT) {
-            playerY = panel.SCREEN_HEIGHT - playerSize;
-        }
 
-        playerX += normalizeX;
-        playerY += normalizeY;
+        double nextX = playerX + normalizeX;
+        double nextY = playerY + normalizeY;
+        
+        if (nextX >= 0 && nextX + playerSize <= panel.SCREEN_WIDTH) {
+            playerX = (int) nextX;
+        }
+        if (nextY >= 0 && nextY + playerSize <= panel.SCREEN_HEIGHT) {
+            playerY = (int) nextY;
+        }
+        
     }
 
     public void setMovement(boolean left, boolean right, boolean up, boolean down) {
