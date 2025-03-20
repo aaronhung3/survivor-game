@@ -7,6 +7,7 @@ import View.GamePanel;
 public class Player {
 
     private GamePanel panel;
+    private Weapon weapon;
 
     public int playerX;
     public int playerY;
@@ -30,6 +31,7 @@ public class Player {
         this.playerSize = playerSize;
         this.playerLives = playerLives;
         this.panel = panel;
+        this.weapon = (new Weapon(playerSize / 2 - 5, playerSize / 2 - 5, this));
     }
 
     public void playerMove() {
@@ -62,6 +64,8 @@ public class Player {
         if (nextY >= 0 && nextY + playerSize <= panel.SCREEN_HEIGHT) {
             playerY = (int) nextY;
         }
+
+        weapon.updatePosition();
         
     }
 
@@ -87,11 +91,6 @@ public class Player {
         invincibleTime = System.currentTimeMillis() + duration;
     }
 
-    public void draw(Graphics g) {
-        g.setColor(Color.GREEN);
-        g.fillRect(playerX, playerY, playerSize, playerSize);
-    }
-
     public int getX() {
         return playerX;
     }
@@ -108,12 +107,22 @@ public class Player {
         return playerLives;
     }
 
+    public Weapon getWeapon() {
+        return weapon;
+    }
+
     public void setX(int x) {
         this.playerX = x;
     }
 
     public void setY(int y) {
         this.playerY = y;
+    }
+
+    // Draw the player
+    public void draw(Graphics g) {
+        g.setColor(Color.GREEN);
+        g.fillRect(playerX, playerY, playerSize, playerSize);
     }
 
 }

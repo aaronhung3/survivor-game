@@ -45,8 +45,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public boolean moveDown;
 
     // Enemy Movement
-    public int enemySpeed = 5;
-
+    public int enemySpeed = 2;
 
     // ALlows the game to run in multiple threads
     Thread gameThread;
@@ -94,8 +93,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     // Handle all game logic
     @Override
     public void run() {
+        final int targetFPS = 120;
+        final long optimalTime = 1000 / targetFPS;
+
         // Trigger the repaint 
         while (gameThread != null) {
+            long startTime = System.nanoTime();
 
             player.playerMove();
 
@@ -118,10 +121,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
             repaint();
 
-            try {
-                Thread.sleep(16); // Smooth movement (~60 FPS)
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            long elapsedTime = (System.nanoTime() - startTime) / 1_000_000; // Convert to milliseconds
+            long sleepTime = optimalTime - elapsedTime;
+
+            if (sleepTime > 0) {
+                try {
+                    Thread.sleep(sleepTime);  // Sleep to maintain stable FPS
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }   
     }
@@ -131,25 +139,27 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (!player.isInvincible() || (System.currentTimeMillis() / 200) % 2 == 0) {
-            player.draw(g); // Only draw the player every alternate frame
+            player.draw(g); // Only draw the player every alternate frame   
         }
         
         for (Enemy enemy : enemies) {
             enemy.draw(g);
         }
+
+        player.getWeapon().draw(g);
     }
 
     // Movement for the player
     @Override
     public void keyPressed(KeyEvent e) {
 
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+        if (e.getKeyCode() == KeyEvent.VK_A) {
             moveLeft = true;
-        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+        } else if (e.getKeyCode() == KeyEvent.VK_D) {
             moveRight = true;
-        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+        } else if (e.getKeyCode() == KeyEvent.VK_W) {
             moveUp = true;
-        } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+        } else if (e.getKeyCode() == KeyEvent.VK_S) {
             moveDown = true;
         }
 
@@ -159,13 +169,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+        if (e.getKeyCode() == KeyEvent.VK_A) {
             moveLeft = false;
-        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+        } else if (e.getKeyCode() == KeyEvent.VK_D) {
             moveRight = false;
-        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+        } else if (e.getKeyCode() == KeyEvent.VK_W) {
             moveUp = false;
-        } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+        } else if (e.getKeyCode() == KeyEvent.VK_S) {
             moveDown = false;
         }
         player.setMovement(moveLeft, moveRight, moveUp, moveDown);
