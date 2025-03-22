@@ -2,17 +2,22 @@ package View;
 import Model.Player;
 import Model.CollisionHandler;
 import Model.Enemy;
+import Model.Bullet;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.KeyEvent;
 import java.util.*;
+import java.util.Timer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class GamePanel extends JPanel implements Runnable, KeyListener {
+public class GamePanel extends JPanel implements Runnable, KeyListener, MouseListener, MouseMotionListener {
 
     // Calculate the tile size for each tile on the screen
     final int originalTileSize = 16;
@@ -37,6 +42,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     // List of enemies
     private final int MAX_ENEMIES = 10;
     private ArrayList<Enemy> enemies = new ArrayList<>();
+
+    // Array list for bullets
+    private ArrayList<Bullet> bullets = new ArrayList<>();
+    private Thread shootingThread;
+    private boolean shooting;
+    private int targetX, targetY;
 
     // Player Movement
     public boolean moveLeft;
@@ -66,6 +77,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         this.setDoubleBuffered(true);
         this.setFocusable(true);
         this.addKeyListener(this);
+        this.addMouseListener(this);
+        this.addMouseMotionListener(this);
 
         startSpawningEnemies();
     }
@@ -119,6 +132,32 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 gameThread = null;
             }
 
+            for (int i = 0; i < bullets.size(); i++) {
+                Bullet bullet = bullets.get(i);
+                bullet.moveBullet();
+
+                boolean bulletRemoved = false;
+
+                if (bullet.getX() < 0 || bullet.getX() > SCREEN_WIDTH || bullet.getY() < 0 || bullet.getY() > SCREEN_HEIGHT || CollisionHandler.bulletColliding(bullet, enemy)) {
+                    bulletRemoved = true;
+                }
+
+                for (Enemy bulletEnemy : enemies) {
+                    if (CollisionHandler.bulletColliding(bullet, bulletEnemy)) {
+                        bulletRemoved = true;
+                        enemies.remove(bulletEnemy);
+                        System.out.println("Bullet collided with enemy!");
+                        break; 
+                    }
+                }
+
+                if (bulletRemoved) {
+                    bullets.remove(i);
+                    System.out.println("Bullet " + i + " has been removed");
+                    i--; // Adjust the index after removal to avoid skipping
+                }
+            }
+
             repaint();
 
             long elapsedTime = (System.nanoTime() - startTime) / 1_000_000; // Convert to milliseconds
@@ -147,6 +186,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         }
 
         player.getWeapon().draw(g);
+
+        for (Bullet bullet : bullets) {
+            bullet.draw(g);
+        }
     }
 
     // Movement for the player
@@ -184,5 +227,68 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     @Override
     public void keyTyped(KeyEvent e) {
 
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        shooting = true;
+        targetX = e.getX();
+        targetY = e.getY();
+
+        if (shootingThread == null || !shootingThread.isAlive()) {
+            shootingThread = new Thread(() -> {
+                while (shooting) {
+                    bullets.add(new Bullet(player.getX(), player.getY(), targetX, targetY));
+                    try {
+                        Thread.sleep(200); // Adjust fire rate
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
+            shootingThread.start();
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        shooting = false;
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        shooting = true;
+        targetX = e.getX();
+        targetY = e.getY();
+
+        if (shootingThread == null || !shootingThread.isAlive()) {
+            shootingThread = new Thread(() -> {
+                while (shooting) {
+                    bullets.add(new Bullet(player.getX(), player.getY(), targetX, targetY));
+                    try {
+                        Thread.sleep(200); // Adjust fire rate
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
+            shootingThread.start();
+        }
     }
 }

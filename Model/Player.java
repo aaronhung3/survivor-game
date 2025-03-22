@@ -7,7 +7,7 @@ import View.GamePanel;
 public class Player {
 
     private GamePanel panel;
-    private Weapon weapon;
+    private WeaponView weapon;
 
     public int playerX;
     public int playerY;
@@ -31,7 +31,7 @@ public class Player {
         this.playerSize = playerSize;
         this.playerLives = playerLives;
         this.panel = panel;
-        this.weapon = (new Weapon(playerSize / 2 - 5, playerSize / 2 - 5, this));
+        this.weapon = (new WeaponView(playerSize / 2 - 5, playerSize / 2 - 5, this));
     }
 
     public void playerMove() {
@@ -58,12 +58,22 @@ public class Player {
         double nextX = playerX + normalizeX;
         double nextY = playerY + normalizeY;
         
-        if (nextX >= 0 && nextX + playerSize <= panel.SCREEN_WIDTH) {
+        if (nextX > 0 && nextX + playerSize <= panel.SCREEN_WIDTH) {
             playerX = (int) nextX;
+        } else if (nextX <= 0) {
+            playerX = 0;
+        } else if (nextX + playerSize >= panel.SCREEN_WIDTH) {
+            playerX = panel.SCREEN_WIDTH - playerSize;
         }
-        if (nextY >= 0 && nextY + playerSize <= panel.SCREEN_HEIGHT) {
+
+        if (nextY > 0 && nextY + playerSize <= panel.SCREEN_HEIGHT) {
             playerY = (int) nextY;
+        } else if (nextY <= 0) {
+            playerY = 0;
+        } else if (nextY + playerSize >= panel.SCREEN_HEIGHT) {
+            playerY = panel.SCREEN_HEIGHT - playerSize;
         }
+        
 
         weapon.updatePosition();
         
@@ -107,7 +117,7 @@ public class Player {
         return playerLives;
     }
 
-    public Weapon getWeapon() {
+    public WeaponView getWeapon() {
         return weapon;
     }
 

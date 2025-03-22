@@ -2,7 +2,7 @@ package Model;
 
 import java.awt.*;
 
-public class Weapon {
+public class WeaponView {
 
     private Player player;
 
@@ -12,7 +12,7 @@ public class Weapon {
     private int offsetX;
     private int offsetY;
 
-    public Weapon(int offsetX, int offsetY, Player player) {
+    public WeaponView(int offsetX, int offsetY, Player player) {
         this.offsetX = offsetX;
         this.offsetY = offsetY;
         this.player = player;
